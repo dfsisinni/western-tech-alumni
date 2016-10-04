@@ -3,84 +3,122 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 public class Week1 {
 
     public static void main(String[] args) {
-        String phrase = "aaaa";
-        System.out.println(palindromeCheck(phrase));
+        Scanner scanner = new Scanner(System.in);
 
-        //spiralMatrix(12);
+        //STRING PROBLEM - VALID PALINDROME
+        System.out.println("STRING PROBLEM - VALID PALINDROME");
+        System.out.println("Enter a phrase to check if it is a palindrome: ");
+        String phrase = scanner.nextLine();
+        if(palindromeCheck(phrase)) {
+            System.out.println(phrase + " is a valid palindrome!");
+        } else {
+            System.out.println(phrase + " is not a valid palindrome!");
+        }
+        System.out.println("\n\n");
 
-        //int [] a = {3,4,5,6,3,3};
-        //int [] b = {3,5,3,3, 5,5,5,4};
 
-        //System.out.println(Arrays.toString(intersect(a, b)));
+        //ARRAY PROBLEM - SPIRAL MATRIX
+        System.out.println("ARRAY PROBLEM - SPIRAL MATRIX");
+
+
+        String in = null;
+        int num = 0;
+        while (in == null) {
+            System.out.println("Enter the size of the spiral matrix: ");
+            in = scanner.nextLine();
+            try {
+                num = Integer.parseInt(in);
+            } catch (Exception ex) {
+                in = null;
+            }
+        }
+        int ar [][] = spiralMatrix(num);
+        for (int i = 0; i < ar[0].length; i++) {
+            printRow(ar[i]);
+        }
+
+        System.out.println("\n\n");
+
+        //HASHMAP PROBLEM - LONGEST SUBSTRING WITHOUT REPEATING CHARACTERS
+        String check = null;
+        System.out.println("HASH MAP PROBLEM - LONGEST SUBSTRING WITHOUT REPEATING CHARACTERS");
+        System.out.println("Enter a phrase to determine the length of the longest substring w/o repeating characters: ");
+        check = scanner.nextLine();
+        System.out.println("The length of the longest substring is: " + lengthOfLongestSubstring(check));
     }
 
-    public int lengthOfLongestSubstring (String s) {
-        HashMap <Character, Integer> map = new HashMap <Character, Integer>();
+    public static int lengthOfLongestSubstring (String s) {
+        HashMap<Character, Integer> map = new HashMap <Character,Integer> ();
 
-        int last = 0;
+        int minLetter = 0;
+        int max = 0;
 
         for (int i = 0; i < s.length(); i++) {
             if (map.containsKey(s.charAt(i))) {
-                map.put('s', i);
+
+                int length = i - minLetter;
+                if (length > max) {
+                    max = length;
+                }
+
+                int letter = map.get(s.charAt(i)) + 1;
+                minLetter = letter;
+
+                map.entrySet().removeIf(p -> p.getValue() < letter);
             }
-        }
-        return -1;
-    }
 
-
-    public static Integer [] intersect(int[] nums1, int[] nums2) {
-        HashSet <Integer> nums = new HashSet<Integer>();
-        HashSet <Integer> intersection = new HashSet<Integer>();
-
-        for (int i = 0; i < nums1.length; i++) {
-            nums.add(nums1[i]);
+            map.put(s.charAt(i), i);
         }
 
-        for (int i = 0; i < nums2.length; i++) {
-            if (nums.contains(nums2[i])) {
-                intersection.add(nums2[i]);
-            }
+        if (max == 0 && minLetter == 0) {
+            return s.length();
         }
 
-        return intersection.toArray(new Integer[intersection.size()]);
+        int length = s.length() - minLetter;
+        if (length > max) {
+            return length;
+        }
+
+        return max;
     }
 
     public static int [] [] spiralMatrix (int n) {
         int arr [] [] = new int [n][n];
 
-        int row = 0, col = 0;
+        int rowMin = 0, colMin = 0;
         int rowMax = n - 1, colMax = n - 1;
         int count = 1;
 
 
-        while (row <= rowMax && col <= colMax) {
-            for (int i = col; i <= colMax; i++) {
-                arr [row][i] = count;
+        while (rowMin <= rowMax && colMin <= colMax) {
+            for (int i = colMin; i <= colMax; i++) {
+                arr [rowMin][i] = count;
                 count ++;
             }
-            row++;
+            rowMin++;
 
-            for (int i = row; i <= rowMax; i++) {
+            for (int i = rowMin; i <= rowMax; i++) {
                 arr[i][colMax] = count;
                 count ++;
             }
             colMax--;
 
-            for (int i = colMax; i >= col; i--) {
+            for (int i = colMax; i >= colMin; i--) {
                 arr[rowMax][i] = count;
                 count ++;
             }
             rowMax--;
 
-            for (int i = rowMax; i >= row; i--) {
-                arr[i][col] = count;
+            for (int i = rowMax; i >= rowMin; i--) {
+                arr[i][colMin] = count;
                 count++;
             }
-            col++;
+            colMin++;
         }
 
         return arr;
